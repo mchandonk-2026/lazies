@@ -23,26 +23,40 @@ jobs:
         run: |
           python -m pip install --quiet pillow
           python - <<'PY'
-          from PIL import Image, ImageDraw, ImageFilter
+          from PIL import Image
+          from collections import deque
           from pathlib import Path
-          import re
           source = Path("assets/WhatsApp Image 2026-11-14 at 12.03.19.jpeg")
           dest = Path("assets/logo-transparente.png")
           im = Image.open(source).convert("RGBA")
           w, h = im.size
-          mask = Image.new("L", (w, h), 0)
-          draw = ImageDraw.Draw(mask)
-          # Keep the exact original design, remove the surrounding square background.
-          margin = max(1, round(min(w, h) * .008))
-          side = min(w, h)
-          x0, y0 = (w-side)//2, (h-side)//2
-          draw.ellipse((x0+margin, y0+margin, x0+side-margin, y0+side-margin), fill=255)
-          mask = mask.filter(ImageFilter.GaussianBlur(max(1, side//450)))
-          im.putalpha(mask)
+          pixels = im.load()
+          # Remove only background connected to the image edges.
+          # Do not use a circular mask: the L and S extend past the circle.
+          corners = [pixels[0,0],pixels[w-1,0],pixels[0,h-1],pixels[w-1,h-1]]
+          bg = tuple(sum(c[i] for c in corners)//4 for i in range(3))
+          seen = bytearray(w*h)
+          q = deque()
+          for x in range(w):
+              q.append((x,0)); q.append((x,h-1))
+          for y in range(h):
+              q.append((0,y)); q.append((w-1,y))
+          while q:
+              x,y = q.popleft()
+              idx = y*w+x
+              if seen[idx]: continue
+              seen[idx] = 1
+              r,g,b,_ = pixels[x,y]
+              if max(abs(r-bg[0]),abs(g-bg[1]),abs(b-bg[2])) > 36: continue
+              pixels[x,y] = (r,g,b,0)
+              if x>0: q.append((x-1,y))
+              if x<w-1: q.append((x+1,y))
+              if y>0: q.append((x,y-1))
+              if y<h-1: q.append((x,y+1))
           im.save(dest, optimize=True)
           html = Path("index.html")
           content = html.read_text()
-          content = content.replace("assets/WhatsApp%20Image%202026-11-14%20at%2012.03.19.jpeg", "assets/logo-transparente.png")
+          content = content.replace("assets/WhatsApp%20Image%202026-11-14%20at%2012.03.19.jpeg", "assets/logo-transparente.png")\n          content = content.replace("clip-path:circle(49% at 50% 50%)!important", "clip-path:none!important")
           html.write_text(content)
           print(f"Created {dest} from original JPEG ({w}x{h})")
           PY
