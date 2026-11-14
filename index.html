@@ -11,6 +11,17 @@
 /* Keep title visible; position the logo lower and farther right on desktop. */
 @media(min-width:801px){.hero-inner{grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:70px}.hero .original-record{max-width:510px;align-self:end;justify-self:end;transform:translate(22px,95px)}.hero{padding-bottom:75px}}
 @media(min-width:801px) and (max-width:1100px){.hero .original-record{max-width:420px;transform:translate(8px,70px)}.hero-inner{gap:35px}}
+
+/* Mobile: place the badge after all hero copy, never behind the headline. */
+@media(max-width:800px){
+ .hero{min-height:0!important;overflow:hidden!important}
+ .hero-inner{display:flex!important;flex-direction:column!important;align-items:stretch!important;gap:34px!important;padding:145px 0 65px!important}
+ .hero-inner>div:first-child{position:relative!important;z-index:2!important;width:100%!important}
+ .hero h1{font-size:clamp(82px,21vw,140px)!important;margin:32px 0 26px!important;line-height:.85!important}
+ .hero p{position:relative!important;z-index:2!important}
+ .hero .original-record{position:relative!important;inset:auto!important;transform:none!important;align-self:center!important;justify-self:center!important;max-width:330px!important;width:76%!important;height:auto!important;opacity:.75!important;margin:0 auto!important;z-index:1!important}
+ .hero .original-logo-hero{width:100%!important;height:auto!important;display:block!important}
+}
 </style></head><body><svg xmlns="http://www.w3.org/2000/svg" width="0" height="0" style="position:absolute;overflow:hidden" aria-hidden="true"><defs><filter id="remove-cream" color-interpolation-filters="sRGB"><feColorMatrix type="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 -5 -5 0 8"/></filter></defs></svg>
 <header><div class="wrap"><a href="#inici" class="logo"><img src="assets/logo-transparente.png" alt="The Lazies — logotip original" class="original-logo-header"></a><nav aria-label="Navegació principal"><a href="#essencia">L'essència</a><a href="#banda">La banda</a><a href="#repertori">Repertori</a><a href="#contacte">Contacte</a></nav><a href="#contacte" class="contact-top">Contracta'ns ↗</a></div></header>
 <main><section class="hero" id="inici"><div class="wrap hero-inner"><div><div class="eyebrow" style="color:var(--gold)">Blues · Jazz · Soul · Rock</div><h1 class="display"><span class="outline">THE</span><span>LAZIES</span></h1><p>Una mica de <b>blues</b>, una mica de <b>jazz</b>, molt de <b>soul</b> i l'energia del <b>rock</b>. Versions amb personalitat i cançons pròpies.</p><a href="#repertori" class="btn">Descobreix el repertori &nbsp; ↗</a></div><div class="record original-record" aria-label="Logotip original de The Lazies"><img src="assets/logo-transparente.png" alt="Logotip original de The Lazies, del dossier" class="original-logo-hero"></div></div></div></section>
