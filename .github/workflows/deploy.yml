@@ -56,7 +56,8 @@ jobs:
           im.save(dest, optimize=True)
           html = Path("index.html")
           content = html.read_text()
-          content = content.replace("assets/WhatsApp%20Image%202026-11-14%20at%2012.03.19.jpeg", "assets/logo-transparente.png")\n          content = content.replace("clip-path:circle(49% at 50% 50%)!important", "clip-path:none!important")
+          content = content.replace("assets/WhatsApp%20Image%202026-11-14%20at%2012.03.19.jpeg", "assets/logo-transparente.png")
+          content = content.replace("clip-path:circle(49% at 50% 50%)!important", "clip-path:none!important")
           html.write_text(content)
           print(f"Created {dest} from original JPEG ({w}x{h})")
           PY
