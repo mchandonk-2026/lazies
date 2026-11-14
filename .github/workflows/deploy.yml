@@ -4,7 +4,7 @@ on:
     branches: [main]
   workflow_dispatch:
 permissions:
-  contents: read
+  contents: write
   pages: write
   id-token: write
 concurrency:
@@ -19,6 +19,40 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+      - name: Create transparent original logo and update website
+        run: |
+          python -m pip install --quiet pillow
+          python - <<'PY'
+          from PIL import Image, ImageDraw, ImageFilter
+          from pathlib import Path
+          import re
+          source = Path("assets/WhatsApp Image 2026-11-14 at 12.03.19.jpeg")
+          dest = Path("assets/logo-transparente.png")
+          im = Image.open(source).convert("RGBA")
+          w, h = im.size
+          mask = Image.new("L", (w, h), 0)
+          draw = ImageDraw.Draw(mask)
+          # Keep the exact original design, remove the surrounding square background.
+          margin = max(1, round(min(w, h) * .008))
+          side = min(w, h)
+          x0, y0 = (w-side)//2, (h-side)//2
+          draw.ellipse((x0+margin, y0+margin, x0+side-margin, y0+side-margin), fill=255)
+          mask = mask.filter(ImageFilter.GaussianBlur(max(1, side//450)))
+          im.putalpha(mask)
+          im.save(dest, optimize=True)
+          html = Path("index.html")
+          content = html.read_text()
+          content = content.replace("assets/WhatsApp%20Image%202026-11-14%20at%2012.03.19.jpeg", "assets/logo-transparente.png")
+          html.write_text(content)
+          print(f"Created {dest} from original JPEG ({w}x{h})")
+          PY
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add assets/logo-transparente.png index.html
+          if ! git diff --cached --quiet; then
+            git commit -m "Add transparent original logo and use it throughout site"
+            git push
+          fi
       - name: Configure Pages
         uses: actions/configure-pages@v5
       - name: Upload site
