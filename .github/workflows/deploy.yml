@@ -60,13 +60,6 @@ jobs:
           html.write_text(content)
           print(f"Created {dest} from original JPEG ({w}x{h})")
           PY
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add assets/logo-transparente.png index.html
-          if ! git diff --cached --quiet; then
-            git commit -m "Add transparent original logo and use it throughout site"
-            git push
-          fi
       - name: Configure Pages
         uses: actions/configure-pages@v5
       - name: Upload site
